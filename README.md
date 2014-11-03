@@ -61,3 +61,18 @@ pytagclound使用到的包
 **输出：**
 
 - url:string:词云图的地址
+
+
+-----------------------------------------------------------
+
+####WordFreq抽象数据类型，包含两个字段
+
+- word=Unicode##词频项
+- freq=Integer##词频
+
+**定义如下：**
+
+```python
+class WordFreq(ComplexModel):    
+    word=Unicode##词频项
+    freq=Integer##词频
