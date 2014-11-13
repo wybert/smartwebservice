@@ -22,7 +22,15 @@ from pytagcloud.colors import COLOR_SCHEMES
 from spyne.model.complex import ComplexModel
 
 
-jieba.load_userdict("data/ap_dict.txt")
+
+
+
+
+
+
+def load_userdict():   
+    jieba.load_userdict("data/ap_dict.txt")
+    
 def load_stopword():
     STOP_WORD = set()
     stopword_file = open("data/stopwords.txt")
@@ -42,11 +50,77 @@ class WordFreq(ComplexModel):
 
 class WordFreqAndwordCloudService(ServiceBase):
 
-
+    @rpc(Unicode,Integer,Unicode) 
+    def add_item_to_userdict(ctx,word,word_freq,word_characteristic):
+        filehandler=open('data/ap_dict.txt','a')
+        filehandler.writelines(word+' '+str(word_freq)+
+                        ' '+word_characteristic+'\n')
+        filehandler.close()
+        
+    @rpc(Unicode) 
+    def delete_item_from_userdict(ctx,word):    
+        filehandler=open('data/ap_dict.txt')
+        data={}
+        for line in filehandler:
+            line=line.strip('\n')
+            line_list=line.split(' ')
+            print line_list[0]
+            data[line_list[0]]=line_list[1:]
+        filehandler.close()  
+        data.pop(word)   
+        filehandler=open('data/ap_dict.txt','w')
+        for k,v in data.iteritems():
+            temp=''    
+            for item in v:
+                temp+=' '+item
+            lines=k+temp+'\n'
+            filehandler.writelines(lines)
+        filehandler.close()
+    
+    @rpc(_returns=Iterable(Unicode))
+    def show_userdict(ctx):
+        filehandler=open('data/ap_dict.txt')
+        re=[]
+        for line in filehandler:
+            line=line.strip('\n')
+            re+=line
+        return re
+            
+    @rpc(Unicode)
+    def add_item_to_stopwords(ctx,word):
+        filehandler=open('data/stopwords.txt','a')
+        filehandler.writelines(word+'\n')
+        filehandler.close()
+    
+    @rpc(Unicode)
+    def delete_item_from_stopwords(ctx,word):    
+        filehandler=open('data/stopwords.txt')
+        data=set()
+        for line in filehandler:
+            line=line.strip('\n')
+            data.add(line)
+        filehandler.close()  
+        data.discard(word)   
+        filehandler=open('data/stopwords.txt','w')
+        for item in data:        
+            filehandler.writelines(item+'\n')
+        filehandler.close()
+    
+    @rpc(_returns=Iterable(Unicode))
+    def show_stopwords(ctx):
+        filehandler=open('data/stopwords.txt')
+        re=[]
+        for line in filehandler:
+            line=line.strip('\n')
+            re+=line
+        return re
+ 
+    
     @rpc(Unicode,Integer,_returns=Iterable(WordFreq))           
     def get_word_freq(ctx,text,top):
 
         STOP_WORD=load_stopword()
+        load_userdict()
         word_freq = {}            
         seg_list = pseg.cut(text)
         for ele in seg_list:

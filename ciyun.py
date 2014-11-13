@@ -39,8 +39,70 @@ def load_stopword():
         STOP_WORD.add(each_line.strip().decode('utf-8'))
     stopword_file.close()
     return STOP_WORD
+# to do  
     
+def add_item_to_userdict(word,word_freq,word_characteristic):
+    filehandler=open('data/ap_dict.txt','a')
+    filehandler.writelines(word+' '+str(word_freq)+
+                    ' '+word_characteristic+'\n')
+    filehandler.close()
+    
+def delete_item_from_userdict(word):    
+    filehandler=open('data/ap_dict.txt')
+    data={}
+    for line in filehandler:
+        line=line.strip('\n')
+        line_list=line.split(' ')
+        print line_list[0]
+        data[line_list[0]]=line_list[1:]
+    filehandler.close()  
+    data.pop(word)   
+    filehandler=open('data/ap_dict.txt','w')
+    for k,v in data.iteritems():
+        temp=''    
+        for item in v:
+            temp+=' '+item
+        lines=k+temp+'\n'
+        filehandler.writelines(lines)
+    filehandler.close()
 
+def show_userdict():
+    filehandler=open('data/ap_dict.txt')
+    re=[]
+    for line in filehandler:
+        line=line.strip('\n')
+        re+=line
+        
+
+def add_item_to_stopwords(word):
+    filehandler=open('data/stopwords.txt','a')
+    filehandler.writelines(word+'\n')
+    filehandler.close()
+
+
+def delete_item_from_stopwords(word):    
+    filehandler=open('data/stopwords.txt')
+    data=set()
+    for line in filehandler:
+        line=line.strip('\n')
+        data.add(line)
+    filehandler.close()  
+    data.discard(word)   
+    filehandler=open('data/stopwords.txt','w')
+    for item in data:        
+        filehandler.writelines(item+'\n')
+    filehandler.close()
+
+def show_stopwords():
+    filehandler=open('data/stopwords.txt')
+    re=[]
+    for line in filehandler:
+        line=line.strip('\n')
+        re+=line
+ 
+      
+
+###########################################################
 
 def get_word_freq(text,top):
     STOP_WORD=load_stopword()
@@ -70,29 +132,29 @@ def get_word_freq(text,top):
         re_list+=[wordfreq]
     return re_list
 
-
-
-raw_file = open("0_all.txt")
-text=u''
-for line in raw_file:
-    text+=line    
-raw_file.close()
-top=10    
-
-
-test=get_word_freq(text,top) 
-
-
-def make_word_cloud(test):
-    paixu_tiqu=[]
-    for item in test:
-        paixu_tiqu+=[(item.word,item.freq)]
-    print paixu_tiqu
-    tags = make_tags(dict(paixu_tiqu),maxsize=120,
-                     colors=COLOR_SCHEMES['audacity'])
-    create_tag_image(tags, 'data/test.png', size=(1500, 1200), 
-                     fontname='simhei.ttf',fontzoom=4)
-    url='test.png'
-    return url
-
-url=make_word_cloud(test)
+#
+#
+#raw_file = open("0_all.txt")
+#text=u''
+#for line in raw_file:
+#    text+=line    
+#raw_file.close()
+#top=10    
+#
+#
+#test=get_word_freq(text,top) 
+#
+#
+#def make_word_cloud(test):
+#    paixu_tiqu=[]
+#    for item in test:
+#        paixu_tiqu+=[(item.word,item.freq)]
+#    print paixu_tiqu
+#    tags = make_tags(dict(paixu_tiqu),maxsize=120,
+#                     colors=COLOR_SCHEMES['audacity'])
+#    create_tag_image(tags, 'data/test.png', size=(1500, 1200), 
+#                     fontname='simhei.ttf',fontzoom=4)
+#    url='test.png'
+#    return url
+#
+#url=make_word_cloud(test)
